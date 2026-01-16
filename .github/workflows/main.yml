@@ -2,36 +2,34 @@ name: Build on Push and PR
 
 on:
   push:
-    branches:
-      - "**"
+    branches: ["**"]
   pull_request:
-    branches:
-      - "**"
+    branches: ["**"]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: "npm"
+          cache-dependency-path: |
+            server/package-lock.json
+            client/package-lock.json
 
-      # Backend
       - name: Install backend dependencies
         working-directory: server
         run: npm install
 
-      - name: Build backend (if applicable)
+      - name: Build backend (if present)
         working-directory: server
         run: npm run build --if-present
 
-      # Frontend
       - name: Install frontend dependencies
         working-directory: client
         run: npm install
